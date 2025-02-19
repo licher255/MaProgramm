@@ -1,0 +1,29 @@
+{
+    "materials": [
+      {
+        "name": "water",
+        "density": 1000,
+        "vp": 1500,
+        "vs": "NA"
+      },
+      {
+        "name": "ice",
+        "density": 917,
+        "vp": 3800,
+        "vs": 1970
+      },
+      {
+        "name": "steel",
+        "density": 7850,
+        "vp": 5940,
+        "vs": 3230
+      },
+      {
+        "name": "aluminium",
+        "density": 2700,
+        "vp": 6420,
+        "vs": 3040
+      }
+    ]
+  }
+  

@@ -15,7 +15,7 @@ class Material:
         self.vp = vp
         self.vs = vs
 
-    def calculate_p_wave_impedance(self):
+    def p_wave_impedance(self):
         """
         Calculate and return the P-wave impedance.
 
@@ -25,7 +25,7 @@ class Material:
         """
         return self.density * self.vp
 
-    def calculate_s_wave_impedance(self):
+    def s_wave_impedance(self):
         """
         Calculate and return the S-wave impedance.
 
