@@ -23,7 +23,4 @@ reflection coefficient of Ligitudinal wave
 reflection coefficient of transversal wave
 
 
-
-
-
 """
