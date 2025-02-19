@@ -3,7 +3,7 @@
       {
         "name": "water",
         "density": 1000,
-        "vp": 1500,
+        "vp": 1480,
         "vs": "NA"
       },
       {
@@ -15,14 +15,20 @@
       {
         "name": "steel",
         "density": 7850,
-        "vp": 5940,
-        "vs": 3230
+        "vp": 5920,
+        "vs": 3250
       },
       {
         "name": "aluminium",
         "density": 2700,
         "vp": 6420,
         "vs": 3040
+      },
+      {
+        "name": "plexiglass",
+        "density": 1200,
+        "vp": 2740,
+        "vs": 1120
       }
     ]
   }

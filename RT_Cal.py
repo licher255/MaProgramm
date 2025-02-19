@@ -66,7 +66,7 @@ class RT_Cal:
 
         For vertical incidence from material1 to material2:
           - P-wave critical angle is defined by: sin(θ_c_p) = vp1 / vp2
-          - S-wave critical angle is defined by: sin(θ_c_s) = vp1 / vs2
+          - S-wave critical angle is defined by: sin(θ_c_s) = vp1/ vs2
         If the ratio is greater than 1, the critical angle is not defined (None).
 
         The angles are returned in degrees.
@@ -90,3 +90,8 @@ class RT_Cal:
             critical_angle_s = None
 
         return critical_angle_p, critical_angle_s
+    
+    def calculate_defraction_angle(self, angle_inc):
+        # from m1 incidence to m2 with angle_inc(deg)
+        sin_defraction_angle = self.material2.vp / self.material1.vp * math.sin(math.radians(angle_inc))
+        return math.degrees(math.asin(sin_defraction_angle))
