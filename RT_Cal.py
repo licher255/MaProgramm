@@ -93,5 +93,37 @@ class RT_Cal:
     
     def calculate_defraction_angle(self, angle_inc):
         # from m1 incidence to m2 with angle_inc(deg)
-        sin_defraction_angle = self.material2.vp / self.material1.vp * math.sin(math.radians(angle_inc))
-        return math.degrees(math.asin(sin_defraction_angle))
+        sin_trans_L_angle = self.material2.vp / self.material1.vp * math.sin(math.radians(angle_inc))
+        trans_L_angle = math.degrees(math.asin(sin_trans_L_angle))
+        sin_trans_S_angle = self.material2.vs / self.material1.vp * math.sin(math.radians(angle_inc))
+        trans_S_angle = math.degrees(math.asin(sin_trans_S_angle))
+        return trans_L_angle, trans_S_angle
+    
+
+    def calculate_intensity_coef(self,angle_inc):
+        """
+        calculate the fluid-solid interface.
+        """
+        trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
+
+        Z_inc = self.material1.density * self.material1.vp /angle_inc
+        Z_L   = self.material2.density * self.material2.vp /trans_L_angle
+        Z_S   = self.material2.density * self.material2.vs /trans_S_angle
+
+        # transmission coefficient:
+
+        under_part = Z_L* (math.cos(2* trans_S_angle)^2) + Z_S* (math.sin(2* trans_S_angle)^2) + Z_inc 
+
+        T_L = (self.material1.density/ self.material2. density) * (2* Z_L* math.cos(2* trans_S_angle))/ under_part
+        T_S = (self.material1.density/ self.material2. density) * (-2* Z_S* math.sin(2* trans_S_angle))/ under_part
+
+        # the acoustic intensity reflection and transmission coefficients:
+        # transalte from degree to radians
+        rad_angle_inc = math.radians(angle_inc)
+        rad_angle_L   = math.radians(trans_L_angle)
+        rad_angle_S   = math.radians(trans_S_angle)
+
+        T_intensity_L = (self.material2.density* math.tan(rad_angle_inc)/ self.material1.density/ math.tan(rad_angle_L)) * (T_L)^2
+        T_intensity_S = (self.material2.density* math.tan(rad_angle_inc)/ self.material1.density/ math.tan(rad_angle_S)) * (T_S)^2
+
+        return T_intensity_L, T_intensity_S
