@@ -60,7 +60,7 @@ class RT_Cal:
         transmission_coefficient = 2 * Z1 / (Z2 + Z1)
         return reflection_coefficient, transmission_coefficient
 
-    def calculate_critical_angles(self):
+
         """
         Calculate the critical angles for P-wave and S-wave during oblique incidence.
 
@@ -75,6 +75,7 @@ class RT_Cal:
                  critical_angle_p: Critical angle for P-wave transmission.
                  critical_angle_s: Critical angle for S-wave transmission.
         """
+    def calculate_critical_angles(self):
         # Calculate critical angle for P-wave: sin(theta) = vp1/vp2
         ratio_p = self.material1.vp / self.material2.vp
         if ratio_p <= 1:
@@ -94,36 +95,75 @@ class RT_Cal:
     def calculate_defraction_angle(self, angle_inc):
         # from m1 incidence to m2 with angle_inc(deg)
         sin_trans_L_angle = self.material2.vp / self.material1.vp * math.sin(math.radians(angle_inc))
-        trans_L_angle = math.degrees(math.asin(sin_trans_L_angle))
         sin_trans_S_angle = self.material2.vs / self.material1.vp * math.sin(math.radians(angle_inc))
-        trans_S_angle = math.degrees(math.asin(sin_trans_S_angle))
+
+         # check defraction
+        if abs(sin_trans_L_angle) > 1:
+            trans_L_angle = None  
+        else:
+            trans_L_angle = math.degrees(math.asin(sin_trans_L_angle))
+
+        if abs(sin_trans_S_angle) > 1:
+            trans_S_angle = None 
+        else:
+            trans_S_angle = math.degrees(math.asin(sin_trans_S_angle))
+
+
         return trans_L_angle, trans_S_angle
     
 
-    def calculate_intensity_coef(self,angle_inc):
-        """
-        calculate the fluid-solid interface.
-        """
-        trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-
-        Z_inc = self.material1.density * self.material1.vp /angle_inc
-        Z_L   = self.material2.density * self.material2.vp /trans_L_angle
-        Z_S   = self.material2.density * self.material2.vs /trans_S_angle
-
-        # transmission coefficient:
-
-        under_part = Z_L* (math.cos(2* trans_S_angle)^2) + Z_S* (math.sin(2* trans_S_angle)^2) + Z_inc 
-
-        T_L = (self.material1.density/ self.material2. density) * (2* Z_L* math.cos(2* trans_S_angle))/ under_part
-        T_S = (self.material1.density/ self.material2. density) * (-2* Z_S* math.sin(2* trans_S_angle))/ under_part
-
-        # the acoustic intensity reflection and transmission coefficients:
-        # transalte from degree to radians
+    def calculate_intensity_coef(self, angle_inc):
+        # Get the critical angles for P-wave and S-wave
+        critical_angle_p, critical_angle_s = self.calculate_critical_angles()
+        # Convert the incident angle to radians and compute the incident medium impedance
         rad_angle_inc = math.radians(angle_inc)
-        rad_angle_L   = math.radians(trans_L_angle)
-        rad_angle_S   = math.radians(trans_S_angle)
+        Z_inc = self.material1.density * self.material1.vp / math.cos(rad_angle_inc)
+        # Case 1: Incident angle is less than the P-wave critical angle; both P-wave and S-wave are transmitted.
+        if angle_inc < critical_angle_p:
+            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
+            rad_angle_L = math.radians(trans_L_angle)
+            rad_angle_S = math.radians(trans_S_angle)
+            # Calculate transmitted wave impedances; note that S-wave impedance uses rad_angle_S.
+            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
+            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
+        
+            under_part = Z_L * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
+        
+            T_L = (self.material1.density / self.material2.density) * (2 * Z_L * math.cos(2 * rad_angle_S)) / under_part
+            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
+        
+            T_intensity_L = (self.material2.density * math.tan(rad_angle_inc) / 
+                            (self.material1.density * math.tan(rad_angle_L))) * (T_L)**2
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / 
+                            (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+        
+            return T_intensity_L, T_intensity_S
+    
+        # Case 2: Incident angle is between the P-wave and S-wave critical angles; 
+        # P-wave becomes evanescent, so only S-wave transmission is considered.
+        elif angle_inc < critical_angle_s:
+            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
+            # Although the P-wave refraction angle is computed, its transmitted energy is set to zero.
+            rad_angle_L = math.radians(trans_L_angle)
+            rad_angle_S = math.radians(trans_S_angle)
+        
+            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
+            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
+        
+            under_part = Z_L * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
+        
+            # Set the P-wave transmission to zero
+            T_L = 0
+            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
+        
+            T_intensity_L = 0
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / 
+                            (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+        
+            return T_intensity_L, T_intensity_S
 
-        T_intensity_L = (self.material2.density* math.tan(rad_angle_inc)/ self.material1.density/ math.tan(rad_angle_L)) * (T_L)^2
-        T_intensity_S = (self.material2.density* math.tan(rad_angle_inc)/ self.material1.density/ math.tan(rad_angle_S)) * (T_S)^2
+        # Case 3: Incident angle is greater than or equal to the S-wave critical angle; 
+        # assume no transmitted energy.
+        else:
+            return 0, 0
 
-        return T_intensity_L, T_intensity_S
