@@ -43,15 +43,15 @@ def main():
         print("S-wave Critical Angle(second critical angle): {:.2f} degrees".format(critical_angle_s))
     else:
         print("S-wave Critical Angle: Not defined")
+        
     #Calculate and output the defraction angle for P-wave, from plexiglass to steel
     angle_plexiglass = rt_calculator.calculate_defraction_angle(0)
     print(f"折射角（纵波）: {angle_plexiglass[0] if angle_plexiglass[0] is not None else '全反射'} 度")
     print(f"折射角（横波）: {angle_plexiglass[1] if angle_plexiglass[1] is not None else '全反射'} 度")
 
-    intensity_coeff = rt_calculator.calculate_intensity_coef(13.3)
+    intensity_coeff = rt_calculator.calculate_intensity_coef(23)
     print(f"纵波L wave 能量系数 : {intensity_coeff[0]}")
     print(f"横波S wave 能量系数 : {intensity_coeff[1]}")
-
 
 if __name__ == '__main__':
     main()

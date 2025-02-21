@@ -118,6 +118,8 @@ class RT_Cal:
         # Convert the incident angle to radians and compute the incident medium impedance
         rad_angle_inc = math.radians(angle_inc)
         Z_inc = self.material1.density * self.material1.vp / math.cos(rad_angle_inc)
+
+
         # Case 1: Incident angle is less than the P-wave critical angle; both P-wave and S-wave are transmitted.
         if angle_inc < critical_angle_p:
             trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
@@ -144,21 +146,20 @@ class RT_Cal:
         elif angle_inc < critical_angle_s:
             trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
             # Although the P-wave refraction angle is computed, its transmitted energy is set to zero.
-            rad_angle_L = math.radians(trans_L_angle)
+            rad_angle_L = math.radians(90)
             rad_angle_S = math.radians(trans_S_angle)
-        
+
             Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
             Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
         
-            under_part = Z_L * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
+            under_part = Z_S * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
         
             # Set the P-wave transmission to zero
             T_L = 0
             T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
         
             T_intensity_L = 0
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / 
-                            (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
         
             return T_intensity_L, T_intensity_S
 
