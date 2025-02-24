@@ -93,78 +93,82 @@ class RT_Cal:
         return critical_angle_p, critical_angle_s
     
     def calculate_defraction_angle(self, angle_inc):
-        # from m1 incidence to m2 with angle_inc(deg)
+    # 根据入射角（单位：度）计算介质2中折射的纵波和横波角度
         sin_trans_L_angle = self.material2.vp / self.material1.vp * math.sin(math.radians(angle_inc))
         sin_trans_S_angle = self.material2.vs / self.material1.vp * math.sin(math.radians(angle_inc))
-
-         # check defraction
+    
         if abs(sin_trans_L_angle) > 1:
             trans_L_angle = None  
         else:
             trans_L_angle = math.degrees(math.asin(sin_trans_L_angle))
-
+    
         if abs(sin_trans_S_angle) > 1:
-            trans_S_angle = None 
+            trans_S_angle = None
         else:
             trans_S_angle = math.degrees(math.asin(sin_trans_S_angle))
-
-
-        return trans_L_angle, trans_S_angle
     
+        return trans_L_angle, trans_S_angle
+
 
     def calculate_intensity_coef(self, angle_inc):
-        # Get the critical angles for P-wave and S-wave
+    
+    # 获取 P 波和 S 波的临界角（此处可用于其它判断，但下面主要依据 defraction_angle 返回的角度）
         critical_angle_p, critical_angle_s = self.calculate_critical_angles()
-        # Convert the incident angle to radians and compute the incident medium impedance
         rad_angle_inc = math.radians(angle_inc)
+    # 入射介质的阻抗
         Z_inc = self.material1.density * self.material1.vp / math.cos(rad_angle_inc)
 
+    # -------------------------------------------------------------------
+    # 情况1：当入射角为 0，只存在纵波传输
+        if angle_inc == 0:
+            z1 = self.material1.density * self.material1.vp
+            z2 = self.material2.density * self.material2.vp
+        # P 波透射系数
+            T_p = 2 * z2 / (z1 + z2)
+        # 根据能量守恒，计算透射强度
+            T_intensity_L = (z1 / z2) * T_p**2
+            return T_intensity_L, 0
 
-        # Case 1: Incident angle is less than the P-wave critical angle; both P-wave and S-wave are transmitted.
-        if angle_inc < critical_angle_p:
-            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-            rad_angle_L = math.radians(trans_L_angle)
-            rad_angle_S = math.radians(trans_S_angle)
-            # Calculate transmitted wave impedances; note that S-wave impedance uses rad_angle_S.
-            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
-            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
-        
-            under_part = Z_L * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
-        
-            T_L = (self.material1.density / self.material2.density) * (2 * Z_L * math.cos(2 * rad_angle_S)) / under_part
-            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
-        
-            T_intensity_L = (self.material2.density * math.tan(rad_angle_inc) / 
-                            (self.material1.density * math.tan(rad_angle_L))) * (T_L)**2
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / 
-                            (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
-        
-            return T_intensity_L, T_intensity_S
-    
-        # Case 2: Incident angle is between the P-wave and S-wave critical angles; 
-        # P-wave becomes evanescent, so only S-wave transmission is considered.
-        elif angle_inc < critical_angle_s:
-            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-            # Although the P-wave refraction angle is computed, its transmitted energy is set to zero.
-            rad_angle_L = math.radians(90)
-            rad_angle_S = math.radians(trans_S_angle)
+    # 对于 angle_inc > 0，先计算介质2中的折射角
+    # 这里返回的 trans_L_angle 和 trans_S_angle 均为角度（单位：度）
+        trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
+        rad_angle_L = math.radians(trans_L_angle)
+        rad_angle_S = math.radians(trans_S_angle)
 
-            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
-            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
-        
-            under_part = Z_S * (math.cos(2 * rad_angle_S))**2 + Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc
-        
-            # Set the P-wave transmission to zero
-            T_L = 0
-            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
-        
-            T_intensity_L = 0
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) / (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
-        
-            return T_intensity_L, T_intensity_S
-
-        # Case 3: Incident angle is greater than or equal to the S-wave critical angle; 
-        # assume no transmitted energy.
-        else:
+    # -------------------------------------------------------------------
+    # 情况2：当入射角等于纵波折射角（θ_L），出现全反射，两个波均无能量传输
+        if math.isclose(angle_inc, trans_L_angle, rel_tol=1e-6):
             return 0, 0
 
+    # -------------------------------------------------------------------
+    # 情况3：当 0 < angle_inc < θ_L 时，介质2中存在折射的纵波和横波
+        if angle_inc < trans_L_angle:
+            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
+            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
+            under_part = (Z_L * (math.cos(2 * rad_angle_S))**2 +
+                            Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc)
+            T_L = (self.material1.density / self.material2.density) * (2 * Z_L * math.cos(2 * rad_angle_S)) / under_part
+            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
+            T_intensity_L = (self.material2.density * math.tan(rad_angle_inc) /
+                           (self.material1.density * math.tan(rad_angle_L))) * (T_L)**2
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) /
+                           (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+            return T_intensity_L, T_intensity_S
+
+    # -------------------------------------------------------------------
+    # 情况4：当 θ_L < angle_inc < θ_S 时，纵波转变为表面波（不传输），仅横波存在折射
+        elif angle_inc < trans_S_angle:
+        # 将纵波折射角视为 90°（表面波），直接置其传输系数为0
+            rad_angle_L = math.radians(90)
+            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
+            under_part = (Z_S * (math.cos(2 * rad_angle_S))**2 +
+                        Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc)
+            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) /
+                           (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+            return 0, T_intensity_S
+
+    # -------------------------------------------------------------------
+    # 情况5：当入射角超过横波折射角或其他条件下，认为无透射能量
+        else:
+            return 0, 0

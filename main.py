@@ -49,7 +49,7 @@ def main():
     print(f"折射角（纵波）: {angle_plexiglass[0] if angle_plexiglass[0] is not None else '全反射'} 度")
     print(f"折射角（横波）: {angle_plexiglass[1] if angle_plexiglass[1] is not None else '全反射'} 度")
 
-    intensity_coeff = rt_calculator.calculate_intensity_coef(23)
+    intensity_coeff = rt_calculator.calculate_intensity_coef(0)
     print(f"纵波L wave 能量系数 : {intensity_coeff[0]}")
     print(f"横波S wave 能量系数 : {intensity_coeff[1]}")
 
