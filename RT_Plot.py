@@ -3,11 +3,7 @@ import matplotlib.pyplot as plt
 class RT_Plot:
     def __init__(self):
         # 尝试使用 seaborn 样式，如果不可用则使用默认样式
-        try:
-            plt.style.use('seaborn')
-        except OSError:
-            print("Seaborn 样式不可用，正在使用默认样式。")
-            plt.style.use('default')
+        plt.style.use('default')
 
     def plot_intensity(self, angles, intensity_L, intensity_S):
         """
@@ -19,11 +15,11 @@ class RT_Plot:
             intensity_S: 对应的S波透射能量系数列表
         """
         plt.figure(figsize=(8, 6))
-        plt.plot(angles, intensity_L, marker='o', linestyle='-', label='P波透射能量系数')
-        plt.plot(angles, intensity_S, marker='s', linestyle='-', label='S波透射能量系数')
-        plt.xlabel('入射角 (°)')
-        plt.ylabel('透射能量系数')
-        plt.title('超声波透射能量系数随入射角变化')
+        plt.plot(angles, intensity_L, marker='o', linestyle='-', label='P wave relative intensity')
+        plt.plot(angles, intensity_S, marker='s', linestyle='-', label='S wave relative intensity')
+        plt.xlabel(r'Incidence angle $\theta$ (°)')
+        plt.ylabel(r'Relative intensity $\frac{I}{I_0}$ (%)')
+        plt.title('Water/aluminium')
         plt.legend()
         plt.grid(True)
         plt.show()

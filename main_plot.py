@@ -1,4 +1,6 @@
 import json
+import numpy as np
+
 from Material import Material
 from RT_Cal import RT_Cal
 from RT_Plot import RT_Plot
@@ -28,24 +30,25 @@ def main():
     return rt_cal
 
 if __name__ == '__main__':
-    # 从 main() 中获得 RT_Cal 实例
     rt_cal = main()
     if rt_cal is None:
         exit(1)
-    
-    # 实例化画图类
     rt_plot = RT_Plot()
-    
-    # 定义入射角范围，比如 0 到 85 度，每隔 5 度计算一次
-    angles = list(range(0, 90, 5))
+
+    Max_angle_inc_l = rt_cal.calculate_critical_angles()[0]
+    Max_angle_inc_s = rt_cal.calculate_critical_angles()[1]
+
+    angles_l = np.arange(0, Max_angle_inc_l, 0.5)
+    angles_s = np.arange(0, Max_angle_inc_s, 0.5)
     intensities_L = []
     intensities_S = []
-    
-    # 遍历各入射角，计算对应的能量系数
-    for angle in angles:
+
+    for angle in angles_s:
         T_intensity_L, T_intensity_S = rt_cal.calculate_intensity_coef(angle)
         intensities_L.append(T_intensity_L)
+
+    for angle in angles_s:
+        T_intensity_L, T_intensity_S = rt_cal.calculate_intensity_coef(angle)
         intensities_S.append(T_intensity_S)
-    
-    # 调用画图方法，绘制图形
-    rt_plot.plot_intensity(angles, intensities_L, intensities_S)
+
+    rt_plot.plot_intensity(angles_s, intensities_L, intensities_S)

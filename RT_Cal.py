@@ -128,21 +128,12 @@ class RT_Cal:
         # 根据能量守恒，计算透射强度
             T_intensity_L = (z1 / z2) * T_p**2
             return T_intensity_L, 0
-
-    # 对于 angle_inc > 0，先计算介质2中的折射角
-    # 这里返回的 trans_L_angle 和 trans_S_angle 均为角度（单位：度）
-        trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-        rad_angle_L = math.radians(trans_L_angle)
-        rad_angle_S = math.radians(trans_S_angle)
-
     # -------------------------------------------------------------------
-    # 情况2：当入射角等于纵波折射角（θ_L），出现全反射，两个波均无能量传输
-        if math.isclose(angle_inc, trans_L_angle, rel_tol=1e-6):
-            return 0, 0
-
-    # -------------------------------------------------------------------
-    # 情况3：当 0 < angle_inc < θ_L 时，介质2中存在折射的纵波和横波
-        if angle_inc < trans_L_angle:
+    # 情况2：当 0 < angle_inc < θ_L 时，介质2中存在折射的纵波和横波
+        elif angle_inc < critical_angle_p:
+            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
+            rad_angle_L = math.radians(trans_L_angle)
+            rad_angle_S = math.radians(trans_S_angle)
             Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
             Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
             under_part = (Z_L * (math.cos(2 * rad_angle_S))**2 +
@@ -154,12 +145,19 @@ class RT_Cal:
             T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) /
                            (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
             return T_intensity_L, T_intensity_S
-
+    #----------------------------------------------------------------------
+    #  情况3： 当发生L wave全反射时：      
+        elif angle_inc == critical_angle_p:
+            T_intensity_L =0
+            T_intensity_S =0
+            return T_intensity_L, T_intensity_S
     # -------------------------------------------------------------------
-    # 情况4：当 θ_L < angle_inc < θ_S 时，纵波转变为表面波（不传输），仅横波存在折射
-        elif angle_inc < trans_S_angle:
+    # 情况3：当 θ_L < angle_inc < θ_S 时，纵波转变为表面波（不传输），仅横波存在折射
+        elif angle_inc < critical_angle_s:
         # 将纵波折射角视为 90°（表面波），直接置其传输系数为0
+            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
             rad_angle_L = math.radians(90)
+            rad_angle_S = math.radians(trans_S_angle)
             Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
             under_part = (Z_S * (math.cos(2 * rad_angle_S))**2 +
                         Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc)
