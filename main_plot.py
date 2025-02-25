@@ -35,20 +35,17 @@ if __name__ == '__main__':
         exit(1)
     rt_plot = RT_Plot()
 
+    # 分别获取 P 波和 S 波的临界入射角
     Max_angle_inc_l = rt_cal.calculate_critical_angles()[0]
     Max_angle_inc_s = rt_cal.calculate_critical_angles()[1]
 
-    angles_l = np.arange(0, Max_angle_inc_l, 0.5)
-    angles_s = np.arange(0, Max_angle_inc_s, 0.5)
-    intensities_L = []
-    intensities_S = []
+    # 分别生成入射角数组：P 波只取到临界角，S 波取全范围
+    angles_l = np.arange(0, Max_angle_inc_l+0.1, 0.1)
+    angles_s = np.arange(0, Max_angle_inc_s, 0.1)
 
-    for angle in angles_s:
-        T_intensity_L, T_intensity_S = rt_cal.calculate_intensity_coef(angle)
-        intensities_L.append(T_intensity_L)
+    # 分别计算能量系数
+    intensities_L = [rt_cal.calculate_intensity_coef(angle)[0] for angle in angles_l]
+    intensities_S = [rt_cal.calculate_intensity_coef(angle)[1] for angle in angles_s]
 
-    for angle in angles_s:
-        T_intensity_L, T_intensity_S = rt_cal.calculate_intensity_coef(angle)
-        intensities_S.append(T_intensity_S)
-
-    rt_plot.plot_intensity(angles_s, intensities_L, intensities_S)
+    # 修改画图函数，使其支持两个 x 数组
+    rt_plot.plot_intensity(angles_l, intensities_L, angles_s, intensities_S)

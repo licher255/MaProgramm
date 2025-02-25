@@ -3,7 +3,7 @@ class Material:
     A class representing a material with density, P-wave velocity, and S-wave velocity.
     """
 
-    def __init__(self, density, vp, vs):
+    def __init__(self, name, density, vp, vs):
         """
         Initialize the Material object.
 
@@ -11,6 +11,7 @@ class Material:
         :param vp: The P-wave velocity (in m/s).
         :param vs: The S-wave velocity (in m/s).
         """
+        self.name = name
         self.density = density
         self.vp = vp
         self.vs = vs
