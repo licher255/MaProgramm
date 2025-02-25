@@ -22,8 +22,8 @@ def main():
         return None
 
     # 创建 Material 实例
-    water = Material(water_data['density'], water_data['vp'], water_data['vs'])
-    aluminium = Material(aluminium_data['density'], aluminium_data['vp'], aluminium_data['vs'])
+    water = Material(water_data['name'],water_data['density'], water_data['vp'], water_data['vs'])
+    aluminium = Material(aluminium_data['name'],aluminium_data['density'], aluminium_data['vp'], aluminium_data['vs'])
 
     # 使用 water 作为入射介质，aluminium 作为透射介质，创建 RT_Cal 实例
     rt_cal = RT_Cal(water, aluminium)
