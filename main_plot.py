@@ -14,7 +14,7 @@ def main():
     materials_data = {mat['name'].lower(): mat for mat in data['materials']}
 
     # 获取 water 和 aluminium 的属性数据
-    water_data = materials_data.get('ice')
+    water_data = materials_data.get('water')
     aluminium_data = materials_data.get('aluminium')
 
     if not water_data or not aluminium_data:

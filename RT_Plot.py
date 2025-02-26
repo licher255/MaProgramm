@@ -9,9 +9,11 @@ class RT_Plot:
 
     def plot_intensity(self, angles_l, intensity_L, angles_s, intensity_S):
         plt.figure(figsize=(8, 6))
+        plt.xlim(0,90)
         plt.ylim(0, 1)
-        plt.plot(angles_l, intensity_L, marker='o', linestyle='-', label='P wave relative intensity')
-        plt.plot(angles_s, intensity_S, marker='s', linestyle='-', label='S wave relative intensity')
+        plt.plot(angles_l, intensity_L, marker='', linestyle='-', label='P wave relative intensity')
+        plt.plot(angles_s, intensity_S, marker='', linestyle='-', label='S wave relative intensity')        # 标注 L 和 S
+        # 标注 L 和 S
         plt.xlabel(r'Incidence angle $\theta$ (°)')
         plt.ylabel(r'Relative intensity $\frac{I}{I_0}$ (%)')
         plt.title('Water/aluminium')
@@ -30,7 +32,7 @@ class RT_Plot:
         group_positions = np.arange(num_materials) * group_width + group_width/2
 
         # 分别为 P 波和 S 波设置不同的 colormap
-        cmap_p = plt.cm.viridis
+        cmap_p = plt.cm.plasma
         cmap_s = plt.cm.plasma
         p_bar_patch = None
         s_bar_patch = None
@@ -76,6 +78,10 @@ class RT_Plot:
                                   edgecolor='black', facecolor='none', lw=1)
             ax.add_patch(outline_S)
 
+            # 在每个柱状图顶部添加文本标签：
+            ax.text(x_left + bar_width/2, crit_L, 'L', ha='center', va='bottom', fontsize=10, color='red')
+            ax.text(x_right + bar_width/2, crit_S, 'T', ha='center', va='bottom', fontsize=10, color='blue')
+
             # 构造图例的 dummy patch（仅构造一次）
             if p_bar_patch is None:
                 p_bar_patch = Rectangle((0, 0), 1, 1, facecolor=cmap_p(0.5), edgecolor='black', lw=1)
@@ -88,11 +94,11 @@ class RT_Plot:
         ax.set_xticklabels(material_names)
         ax.set_xlabel('Interface 1 Materials')
         ax.set_ylabel('Incidence angle (°)')
-        ax.set_title('Critical incidence angles with gradient-filled bars')
-        ax.legend([p_bar_patch, s_bar_patch], ['P wave', 'S wave'])
+        ax.set_title('Critical incidence angles with gradient-filled bars', y=1.05, pad=5)
+        #ax.legend([p_bar_patch, s_bar_patch], ['L wave', 'T wave'])
 
         # 设置 x 轴范围，确保所有柱状图完整显示
         ax.set_xlim(0, num_materials * group_width)
         ax.set_ylim(0, 90)
-        ax.grid(True)
+        ax.grid(False)
         plt.show()

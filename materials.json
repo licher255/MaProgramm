@@ -29,7 +29,65 @@
         "density": 1200,
         "vp": 2740,
         "vs": 1120
+      },
+      {
+        "name":"Epoxy",
+        "density":1210,
+        "vp": 2700,
+        "vs": 1150
+      },
+      {
+        "name": "Brass",
+        "density": 8640,
+        "vp": 4700,
+        "vs": 2100
+      },
+      {
+        "name": "Gold",
+        "density":19700,
+        "vp": 3240,
+        "vs": 1200
+      },
+      {
+        "name": "Lead",
+        "density":24600,
+        "vp": 2160,
+        "vs":700
+      },
+      {
+        "name": "Zinc",
+        "density": 7100,
+        "vp":4170,
+        "vs":2410
+      },
+      {
+        "name": "Gallium",
+        "density": 5910,
+        "vp":2740,
+        "vs":900
+      },
+      {
+        "name":"Sodium Acetate Trihydrate",
+        "density":1500,
+        "vp":2500,
+        "vs":1250
+      },
+      {
+        "name": "wax",
+        "density": 900,
+        "vp": 1300,
+        "vs": 400
+      },
+      {
+        "name": "RT27",
+        "density": 900,
+        "vp":2000,
+        "vs": 1000
       }
+
+
+
+
     ]
   }
   
