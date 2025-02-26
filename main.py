@@ -11,7 +11,7 @@ def main():
     materials_data = {mat['name'].lower(): mat for mat in data['materials']}
 
     # Retrieve the properties for ice and steel
-    ice_data = materials_data.get('water')
+    ice_data = materials_data.get('ice')
     steel_data = materials_data.get('aluminium')
 
     if not ice_data or not steel_data:
@@ -19,8 +19,8 @@ def main():
         return
 
     # Create Material instances for ice and steel
-    ice = Material(ice_data['density'], ice_data['vp'], ice_data['vs'])
-    steel = Material(steel_data['density'], steel_data['vp'], steel_data['vs'])
+    ice = Material(ice_data['name'],ice_data['density'], ice_data['vp'], ice_data['vs'])
+    steel = Material(steel_data['name'],steel_data['density'], steel_data['vp'], steel_data['vs'])
 
     # Create an RT_Cal instance using ice as the incident medium and steel as the transmission medium
     rt_calculator = RT_Cal(ice, steel)

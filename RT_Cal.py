@@ -81,14 +81,14 @@ class RT_Cal:
         if ratio_p <= 1:
             critical_angle_p = math.degrees(math.asin(ratio_p))
         else:
-            critical_angle_p = None
+            critical_angle_p = 90
 
         # Calculate critical angle for S-wave: sin(theta) = vp1/vs2
         ratio_s = self.material1.vp / self.material2.vs
         if ratio_s <= 1:
             critical_angle_s = math.degrees(math.asin(ratio_s))
         else:
-            critical_angle_s = None
+            critical_angle_s = 90
 
         return critical_angle_p, critical_angle_s
     
