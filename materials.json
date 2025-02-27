@@ -31,7 +31,7 @@
         "vs": 1120
       },
       {
-        "name":"Epoxy",
+        "name":"epoxy",
         "density":1210,
         "vp": 2700,
         "vs": 1150
@@ -49,19 +49,19 @@
         "vs": 1200
       },
       {
-        "name": "Lead",
+        "name": "lead",
         "density":24600,
         "vp": 2160,
         "vs":700
       },
       {
-        "name": "Zinc",
+        "name": "zinc",
         "density": 7100,
         "vp":4170,
         "vs":2410
       },
       {
-        "name": "Gallium",
+        "name": "gallium",
         "density": 5910,
         "vp":2740,
         "vs":900
