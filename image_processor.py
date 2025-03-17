@@ -11,7 +11,7 @@ class ImageProcessor:
     PIXEL_DIM = (702, 702)       # Image pixel dimensions: (height, width)
     SCALE = (51, 51)             # Physical dimensions in mm (height, width)
 
-    def __init__(self, image_path):
+    def __init__(self, image_path,image_type):
         """
         Initialize the image processor.
         
@@ -19,6 +19,7 @@ class ImageProcessor:
         - image_path: string, path to the image file.
         """
         self.image_path = image_path
+        self.image_type = image_path
         self.amplitude_matrix = None  # To store the normalized amplitude matrix
         self.load_image()
 

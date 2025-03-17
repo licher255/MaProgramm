@@ -20,9 +20,10 @@ def localization_error(gt_coord, hm_coord):
 
 if __name__ == '__main__':
     # Create ImageProcessor instances for the ground truth and heatmap images.
-    gt_processor = ImageProcessor('ground_truth.png', image_type='ground_truth')
-    heatmap1_processor = ImageProcessor('heatmap1.png', image_type='heatmap')
-    heatmap2_processor = ImageProcessor('heatmap2.png', image_type='heatmap')
+
+    gt_processor = ImageProcessor('pic_rec/gt2.png', image_type='ground_truth')
+    heatmap1_processor = ImageProcessor('pic_rec/ice.png', image_type='heatmap')
+    heatmap2_processor = ImageProcessor('pic_rec/water.png', image_type='heatmap')
 
     # Compute centroids (localization) for each image.
     gt_loc = gt_processor.compute_localization_error()
