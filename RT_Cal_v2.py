@@ -26,7 +26,7 @@ reflection coefficient of transversal wave
 
 import math
 
-class RT_Cal:
+class RT_Cal_v2:
     """
     A class for calculating reflection and transmission coefficients,
     and critical angles for oblique incidence between two materials.
@@ -48,7 +48,7 @@ class RT_Cal:
 
         The P-wave impedance is used for these calculations.
         Reflection coefficient (R) = (Z2 - Z1) / (Z2 + Z1)
-        Transmission coefficient (T) = 2 * Z1 / (Z2 + Z1)
+        Transmission coefficient (T) = 2 * Z2 / (Z2 + Z1)
 
         :return: A tuple (reflection_coefficient, transmission_coefficient).
         """
@@ -57,7 +57,7 @@ class RT_Cal:
         Z2 = self.material2.density * self.material2.vp
 
         reflection_coefficient = (Z2 - Z1) / (Z2 + Z1)
-        transmission_coefficient = 2 * Z1 / (Z2 + Z1)
+        transmission_coefficient = 2 * Z2 / (Z2 + Z1)
         return reflection_coefficient, transmission_coefficient
 
 
@@ -156,20 +156,34 @@ class RT_Cal:
         elif angle_inc < critical_angle_s:
         # 将纵波折射角视为 90°（表面波），直接置其传输系数为0
             trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-            rad_angle_L = math.radians(90)
+            
             rad_angle_S = math.radians(trans_S_angle)
 
+            Z_L = self.material2.density * self.material2.vp / math.sqrt(1-(self.material2.vp/self.material2.vp*math.sin(rad_angle_inc))**2)
             Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
+            Z_inc = self.material1.density * self.material1.vp /math.cos(rad_angle_inc)
 
-            under_part = (Z_S * (math.cos(2 * rad_angle_S))**2 +
-                        Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc)
-            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
+            T_S = -(self.material1.density / self.material2.density)* (2 *Z_S * math.sin(2* rad_angle_S) /(Z_L*math.cos(2*rad_angle_S)**2 + Z_S*math.sin(2*rad_angle_S)**2 + Z_inc))
             
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) /
-                           (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
+            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc))/(self.material1.density* math.tan(rad_angle_S))* T_S**2
+
+            #T_intensity_S = 1- self.calculate_R_I_coef(angle_inc)
+            
             return 0, T_intensity_S
 
     # -------------------------------------------------------------------
     # 情况5：当入射角超过横波折射角或其他条件下，认为无透射能量
         else:
-            return 0, 0
+            return 0, 00
+        
+
+    def calculate_R_I_coef(self, angle_inc):
+        rad_angle_inc = math.radians(angle_inc) 
+        Teil1= math.sqrt(math.sin(rad_angle_inc)**2 - (self.material1.vp/ self.material2.vp)**2)
+        Teil2 = self.material2.density / self.material1.density* math.cos(rad_angle_inc)
+        R_P_L = -2 * math.atan(Teil1/Teil2)
+        R_I_L = R_P_L**2
+
+        return R_I_L
+
+

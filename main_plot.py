@@ -4,6 +4,7 @@ import numpy as np
 from Material import Material
 from RT_Cal import RT_Cal
 from RT_Plot import RT_Plot
+from RT_Cal_v2 import RT_Cal_v2
 
 def main():
 
@@ -31,7 +32,8 @@ def main():
     lead = Material(lead_data['name'],lead_data['density'], lead_data['vp'], lead_data['vs'])
     zinc = Material(zinc_data['name'],zinc_data['density'], zinc_data['vp'], zinc_data['vs'])
 
-    rt_cal = RT_Cal(lead, aluminium)
+    #rt_cal = RT_Cal(water, aluminium)
+    rt_cal =RT_Cal_v2(water, aluminium)
     rt_plot = RT_Plot()
     rt_plot.plot_intensity(rt_cal, rt_cal.material1, rt_cal.material2)
 
