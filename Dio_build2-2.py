@@ -67,9 +67,9 @@ cP1 = 1480                    # 水中长波速度 [m/s]
 cS1 = 0.0013 + 0.0013j        # 模型中水的剪切波速度（采用复数，描述其强衰减）
 
 
-rho2 = 2700                   # 铝的密度 [kg/m^3]
-cP2 = 6420                    # 铝中长波速度 [m/s]
-cS2 = 3040                    # 铝中剪切波速度 [m/s]
+rho2 = 1185             # PMMA的密度 [kg/m^3]
+cP2 = 2730                 # PMMA中长波速度 [m/s]
+cS2 = 1365                   # PMMA中剪切波速度 [m/s]
 
 # 构建入射角数组（0到90度，转换为弧度）
 angles_deg = np.linspace(0, 90, 181)    # 每0.5度一个点
@@ -129,7 +129,7 @@ plt.plot(angles_deg, T_P_energy_arr, label=r'$T^I_L$', linewidth=2)
 plt.plot(angles_deg, T_S_energy_arr, label=r'$T^I_S$', linewidth=2)
 plt.xlabel("incident angle (°)", fontsize=14)
 plt.ylabel("intensity coefficient", fontsize=14)
-plt.title("Water-Aluminum Interface", fontsize=16)
+plt.title("Water-PMMA Interface", fontsize=16)
 plt.legend(fontsize=12)
 plt.xlim(0, 90)
 plt.ylim(0, 1.1)

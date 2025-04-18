@@ -61,15 +61,16 @@ def compute_coeffs(theta_inc, rho1, cP1, cS1, rho2, cP2, cS2):
     return X, theta_P2, theta_S1, theta_S2
 
 # ---------------------
+
 # 设置介质参数（文献中的 water – aluminum 参数）
-rho1 = 1000                   # 水的密度 [kg/m^3]
-cP1 = 1480                    # 水中长波速度 [m/s]
-cS1 = 0.0013 + 0.0013j        # 模型中水的剪切波速度（采用复数，描述其强衰减）
+rho1 = 2700      # 铝的密度 [kg/m^3]
+cP1 = 6420       # 铝中长波速度 [m/s]
+cS1 = 3040+ 0.0013j         # 模型中铝的剪切波速度（采用复数，描述其强衰减）
 
 
-rho2 = 2700                   # 铝的密度 [kg/m^3]
-cP2 = 6420                    # 铝中长波速度 [m/s]
-cS2 = 3040                    # 铝中剪切波速度 [m/s]
+rho2 = 1185     # plexiglas的密度 [kg/m^3]
+cP2 = 2730      # plexiglass中长波速度 [m/s]
+cS2 = 1900 + 0.0013j      # plexiglass中剪切波速度 [m/s]
 
 # 构建入射角数组（0到90度，转换为弧度）
 angles_deg = np.linspace(0, 90, 181)    # 每0.5度一个点
@@ -82,10 +83,10 @@ R_S_arr = np.zeros_like(angles_rad, dtype=np.complex128)
 T_P_arr = np.zeros_like(angles_rad, dtype=np.complex128)
 T_S_arr = np.zeros_like(angles_rad, dtype=np.complex128)
 
-R_P_energy_arr = np.zeros_like(angles_rad, dtype=np.float64)
-R_S_energy_arr = np.zeros_like(angles_rad, dtype=np.float64)
-T_P_energy_arr = np.zeros_like(angles_rad, dtype=np.float64)
-T_S_energy_arr = np.zeros_like(angles_rad, dtype=np.float64)
+R_P_amp_arr = np.zeros_like(angles_rad, dtype=np.float64)
+R_S_amp_arr = np.zeros_like(angles_rad, dtype=np.float64)
+T_P_amp_arr = np.zeros_like(angles_rad, dtype=np.float64)
+T_S_amp_arr = np.zeros_like(angles_rad, dtype=np.float64)
 
 
 # 对各入射角循环计算振幅系数
@@ -94,44 +95,24 @@ for i, theta in enumerate(angles_rad):
     
     R_P, R_S, T_P, T_S = X[0], X[1], X[2], X[3]
 
-    R_P_arr[i] = R_P
-    R_S_arr[i] = R_S
-    T_P_arr[i] = T_P
-    T_S_arr[i] = T_S
-
-    # 计算各模式对应的“角阻抗”，注意使用对应波的入射角
-    # 介质1中长波阻抗
-    Z_P1 = (cP1 * rho1) / np.cos(theta)
-    # 介质2中长波阻抗
-    Z_P2 = (cP2 * rho2) / np.cos(thetaP2)
-    # 介质1中剪切波阻抗（液体中剪切波以复数形式描述）
-    Z_S1 = (cS1 * rho1) / np.cos(thetaS1)
-    # 介质2中剪切波阻抗
-    Z_S2 = (cS2 * rho2) / np.cos(thetaS2)
-
-    denom = np.real(1/np.conjugate(Z_P1))
-
-        # 计算功率系数（能量系数），注意公式中定义的复共轭运算
-    R_P_energy = (R_P * np.conjugate(R_P)).real
-    R_S_energy = (R_S * np.conjugate(R_S)).real * (np.real(1/np.conjugate(Z_S1)) / denom)
-    T_P_energy = (T_P * np.conjugate(T_P)).real * (np.real(1/np.conjugate(Z_P2)) / denom)
-    T_S_energy = (T_S * np.conjugate(T_S)).real * (np.real(1/np.conjugate(Z_S2)) / denom)
-    
-    R_P_energy_arr[i] = R_P_energy
-    R_S_energy_arr[i] = R_S_energy
-    T_P_energy_arr[i] = T_P_energy
-    T_S_energy_arr[i] = T_S_energy
-
+    R_P_amp_arr[i] = np.sqrt((R_P * np.conjugate(R_P)).real)
+    R_S_amp_arr[i] = np.sqrt((R_S * np.conjugate(R_S)).real)* (rho1/rho2)*(cS1/cS2)
+    T_P_amp_arr[i] = np.sqrt((T_P * np.conjugate(T_P)).real)* (rho1/rho2)*(cP1/cP2)
+    T_S_amp_arr[i] = np.sqrt((T_S * np.conjugate(T_S)).real)* (rho1/rho2)
+    #R_P_amp_arr[i] = R_P.real
+    #R_S_amp_arr[i] = R_S.real
+    #T_P_amp_arr[i] = T_P.real
+    #T_S_amp_arr[i] = T_S.real
 plt.figure(figsize=(6, 5))
-plt.plot(angles_deg, R_P_energy_arr, label=r'$R^I_L$', linewidth=2)
-plt.plot(angles_deg, R_S_energy_arr, label=r'$R^I_S$', linewidth=2)
-plt.plot(angles_deg, T_P_energy_arr, label=r'$T^I_L$', linewidth=2)
-plt.plot(angles_deg, T_S_energy_arr, label=r'$T^I_S$', linewidth=2)
+plt.plot(angles_deg, R_P_amp_arr, label=r'$R_P^{Amp}$', linewidth=2)
+plt.plot(angles_deg, R_S_amp_arr, label=r'$R_S^{Amp}$', linewidth=2)
+plt.plot(angles_deg, T_P_amp_arr, label=r'$T_P^{Amp}$', linewidth=2)
+plt.plot(angles_deg, T_S_amp_arr, label=r'$T_S^{Amp}$', linewidth=2)
 plt.xlabel("incident angle (°)", fontsize=14)
 plt.ylabel("intensity coefficient", fontsize=14)
-plt.title("Water-Aluminum Interface", fontsize=16)
+plt.title("Aluminium-Plexiglass Interface", fontsize=16)
 plt.legend(fontsize=12)
 plt.xlim(0, 90)
-plt.ylim(0, 1.1)
-plt.grid(True)
+plt.ylim(0, 2.0)
+#plt.grid(True)
 plt.show()
