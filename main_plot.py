@@ -43,7 +43,7 @@ def main():
     hastelloy_x = Material(hastelloyX['name'], hastelloyX['density'], hastelloyX['vp'], hastelloyX['vs'])
 
     #rt_cal = RT_Cal(water, aluminium)
-    rt_cal =RT_Cal_v2(water, aluminium)
+    rt_cal =RT_Cal_v2(zinc, aluminium)
     rt_plot = RT_Plot()
     rt_plot.plot_intensity(rt_cal, rt_cal.material1, rt_cal.material2)
 
