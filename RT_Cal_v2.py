@@ -25,6 +25,7 @@ reflection coefficient of transversal wave
 """
 
 import math
+import numpy as np
 
 class RT_Cal_v2:
     """
@@ -111,79 +112,68 @@ class RT_Cal_v2:
 
 
     def calculate_intensity_coef(self, angle_inc):
-    
-    # 获取 P 波和 S 波的临界角（此处可用于其它判断，但下面主要依据 defraction_angle 返回的角度）
-        critical_angle_p, critical_angle_s = self.calculate_critical_angles()
-        rad_angle_inc = math.radians(angle_inc)
-    # 入射介质的阻抗
-        Z_inc = self.material1.density * self.material1.vp / math.cos(rad_angle_inc)
-
-    # -------------------------------------------------------------------
-    # 情况1：当入射角为 0，只存在纵波传输
-        if angle_inc == 0:
-            z1 = self.material1.density * self.material1.vp
-            z2 = self.material2.density * self.material2.vp
-        # P 波透射系数
-            T_p = 2 * z2 / (z1 + z2)
-        # 根据能量守恒，计算透射强度
-            T_intensity_L = (z1 / z2) * T_p**2
-            return T_intensity_L, 0
-    # -------------------------------------------------------------------
-    # 情况2：当 0 < angle_inc < θ_L 时，介质2中存在折射的纵波和横波
-        elif angle_inc < critical_angle_p:
-            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-            rad_angle_L = math.radians(trans_L_angle)
-            rad_angle_S = math.radians(trans_S_angle)
-            Z_L = self.material2.density * self.material2.vp / math.cos(rad_angle_L)
-            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
-            under_part = (Z_L * (math.cos(2 * rad_angle_S))**2 +
-                            Z_S * (math.sin(2 * rad_angle_S))**2 + Z_inc)
-            T_L = (self.material1.density / self.material2.density) * (2 * Z_L * math.cos(2 * rad_angle_S)) / under_part
-            T_S = (self.material1.density / self.material2.density) * (-2 * Z_S * math.sin(2 * rad_angle_S)) / under_part
-            T_intensity_L = (self.material2.density * math.tan(rad_angle_inc) /
-                           (self.material1.density * math.tan(rad_angle_L))) * (T_L)**2
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc) /
-                           (self.material1.density * math.tan(rad_angle_S))) * (T_S)**2
-            return T_intensity_L, T_intensity_S
-    #----------------------------------------------------------------------
-    #  情况3： 当发生L wave全反射时：      
-        elif angle_inc == critical_angle_p:
-            T_intensity_L =0
-            T_intensity_S =0
-            return T_intensity_L, T_intensity_S
-    # -------------------------------------------------------------------
-    # 情况3：当 θ_L < angle_inc < θ_S 时，纵波转变为表面波（不传输），仅横波存在折射
-        elif angle_inc < critical_angle_s:
-        # 将纵波折射角视为 90°（表面波），直接置其传输系数为0
-            trans_L_angle, trans_S_angle = self.calculate_defraction_angle(angle_inc)
-            
-            rad_angle_S = math.radians(trans_S_angle)
-
-            Z_L = self.material2.density * self.material2.vp / math.sqrt(1-(self.material2.vp/self.material2.vp*math.sin(rad_angle_inc))**2)
-            Z_S = self.material2.density * self.material2.vs / math.cos(rad_angle_S)
-            Z_inc = self.material1.density * self.material1.vp /math.cos(rad_angle_inc)
-
-            T_S = -(self.material1.density / self.material2.density)* (2 *Z_S * math.sin(2* rad_angle_S) /(Z_L*math.cos(2*rad_angle_S)**2 + Z_S*math.sin(2*rad_angle_S)**2 + Z_inc))
-            
-            T_intensity_S = (self.material2.density * math.tan(rad_angle_inc))/(self.material1.density* math.tan(rad_angle_S))* T_S**2
-
-            #T_intensity_S = 1- self.calculate_R_I_coef(angle_inc)
-            
-            return 0, T_intensity_S
-
-    # -------------------------------------------------------------------
-    # 情况5：当入射角超过横波折射角或其他条件下，认为无透射能量
-        else:
-            return 0, 00
+        """
+        用矩阵方法计算给定入射角（度）下的振幅系数和能量（强度）系数：
+        返回一个字典，包含 R_P, R_S, T_P, T_S 的强度系数。
+        """
+        # 1. 参数提取
+        asin_complex = np.lib.scimath.arcsin
         
+        rho1, cP1, cS1 = (self.material1.density,
+                          self.material1.vp,
+                          self.material1.vs if np.iscomplexobj(self.material1.vs) 
+                            else self.material1.vs + 0j)
+        rho2, cP2, cS2 = (self.material2.density,
+                          self.material2.vp,
+                          self.material2.vs)
 
-    def calculate_R_I_coef(self, angle_inc):
-        rad_angle_inc = math.radians(angle_inc) 
-        Teil1= math.sqrt(math.sin(rad_angle_inc)**2 - (self.material1.vp/ self.material2.vp)**2)
-        Teil2 = self.material2.density / self.material1.density* math.cos(rad_angle_inc)
-        R_P_L = -2 * math.atan(Teil1/Teil2)
-        R_I_L = R_P_L**2
+        # 2. 角度转换
+        theta_P1 = np.deg2rad(angle_inc)
+        sin_P1 = np.sin(theta_P1)
 
-        return R_I_L
+        # 3. 通过 Snell 计算复数折射角
+        theta_P2 = asin_complex((cP2 / cP1) * sin_P1)
+        theta_S1 = asin_complex((cS1 / cP1) * sin_P1)
+        theta_S2 = asin_complex((cS2 / cP1) * sin_P1)
 
+        # 4. 构建线性方程 M X = b
+        M = np.array([
+            [ np.sin(theta_P1)/(rho1*cP1),  np.cos(theta_S1)/(rho1*cS1),
+             -np.sin(theta_P2)/(rho2*cP2),  np.sin(theta_S2)/(rho2*cS2) ],
+            [ np.cos(theta_P1)/(rho1*cP1), -np.sin(theta_S1)/(rho1*cS1),
+              np.cos(theta_P2)/(rho2*cP2),  np.sin(theta_S2)/(rho2*cS2) ],
+            [ -np.cos(2*theta_S1),           np.sin(2*theta_S1),
+              np.cos(2*theta_S2),           np.sin(2*theta_S2) ],
+            [  np.sin(2*theta_P1)/(cP1**2/cS1**2),  np.cos(2*theta_S1),
+               np.sin(2*theta_P2)/(cP2**2/cS2**2), -np.cos(2*theta_S2) ]
+        ], dtype=np.complex128)
+
+        b = np.array([
+            -np.sin(theta_P1)/(rho1*cP1),
+             np.cos(theta_P1)/(rho1*cP1),
+             np.cos(2*theta_S1),
+             np.sin(2*theta_P1)/(cP1**2/cS1**2)
+        ], dtype=np.complex128)
+
+        R_P, R_S, T_P, T_S = np.linalg.solve(M, b)
+
+        # 5. 计算角阻抗并归一化因子
+        Z_P1 = (cP1 * rho1) / np.cos(theta_P1)
+        Z_P2 = (cP2 * rho2) / np.cos(theta_P2)
+        Z_S1 = (cS1 * rho1) / np.cos(theta_S1)
+        Z_S2 = (cS2 * rho2) / np.cos(theta_S2)
+        norm = np.real(1/np.conjugate(Z_P1))
+
+        # 6. 计算能量（强度）系数
+        R_P_energy = (R_P * np.conjugate(R_P)).real
+        R_S_energy = (R_S * np.conjugate(R_S)).real * (np.real(1/np.conjugate(Z_S1)) / norm)
+        T_P_energy = (T_P * np.conjugate(T_P)).real * (np.real(1/np.conjugate(Z_P2)) / norm)
+        T_S_energy = (T_S * np.conjugate(T_S)).real * (np.real(1/np.conjugate(Z_S2)) / norm)
+
+        return {
+            'R_P': R_P_energy,
+            'R_S': R_S_energy,
+            'T_P': T_P_energy,
+            'T_S': T_S_energy
+        }
 

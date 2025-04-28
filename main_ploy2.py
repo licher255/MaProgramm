@@ -9,27 +9,36 @@ def main():
 
     materials_data = {mat['name'].lower(): mat for mat in data['materials']}
 
-    water_data = materials_data.get('water')
+    alIce_data = materials_data.get('al ice composite')
+    BiSn_data =materials_data.get('bi sn')
+    gallium_data = materials_data.get('gallium')
     ice_data = materials_data.get('ice')
-    plexiglass_data = materials_data.get('plexiglass')
-    aluminium_data = materials_data.get('aluminium')
-    steel_data = materials_data.get('steel')
-    epoxy_data = materials_data.get('epoxy')
     lead_data = materials_data.get('lead')
+    water_data = materials_data.get('water')
+    wax_data = materials_data.get('wax')
+    rexolite_data= materials_data.get ('rexolite')
     zinc_data = materials_data.get('zinc')
 
-    water = Material(water_data['name'],water_data['density'], water_data['vp'], water_data['vs'])
-    ice = Material(ice_data['name'],ice_data['density'], ice_data['vp'], ice_data['vs'])
-    plexiglass = Material(plexiglass_data['name'],plexiglass_data['density'], plexiglass_data['vp'], plexiglass_data['vs'])
-    aluminium = Material(aluminium_data['name'],aluminium_data['density'], aluminium_data['vp'], aluminium_data['vs'])
-    steel = Material(steel_data['name'],steel_data['density'], steel_data['vp'], steel_data['vs'])
-    epoxy = Material(epoxy_data['name'],epoxy_data['density'], epoxy_data['vp'], epoxy_data['vs'])
-    lead = Material(lead_data['name'],lead_data['density'], lead_data['vp'], lead_data['vs'])
-    zinc = Material(zinc_data['name'],zinc_data['density'], zinc_data['vp'], zinc_data['vs'])
-    
+    aluminium_data = materials_data.get('aluminium')
+    stainlessSteel347 = materials_data.get('stainless steel347')
+    hastelloyX =materials_data.get('hastelloy x')
+
+
+    alIce = Material(alIce_data['name'], alIce_data['density'], alIce_data['vp'], alIce_data['vs'])
+    BiSn = Material(BiSn_data['name'], BiSn_data['density'], BiSn_data['vp'], BiSn_data['vs'])
+    gallium = Material(gallium_data['name'], gallium_data['density'], gallium_data['vp'], gallium_data['vs'])
+    lead = Material(lead_data['name'], lead_data['density'], lead_data['vp'], lead_data['vs'])
+    wax = Material(wax_data['name'], wax_data['density'], wax_data['vp'], wax_data['vs'])
+    water = Material(water_data['name'], water_data['density'], water_data['vp'],water_data['vs'])
+    ice = Material(ice_data['name'], ice_data['density'], ice_data['vp'], ice_data['vs'])
+    rexolite = Material(rexolite_data['name'], rexolite_data['density'], rexolite_data['vp'], rexolite_data['vs'])
+    zinc = Material(zinc_data['name'], zinc_data['density'], zinc_data['vp'], zinc_data['vs'])
+    aluminium = Material(aluminium_data['name'], aluminium_data['density'], aluminium_data['vp'], aluminium_data['vs'])
+    stainless_steel_347 = Material(stainlessSteel347['name'], stainlessSteel347['density'], stainlessSteel347['vp'], stainlessSteel347['vs'])
+    hastelloy_x = Material(hastelloyX['name'], hastelloyX['density'], hastelloyX['vp'], hastelloyX['vs'])
 
     rt_plot = RT_Plot()
-    rt_plot.plot_material_bars(aluminium, [water, ice, plexiglass, lead,zinc])
+    rt_plot.plot_material_bars(aluminium, [water, ice, lead, zinc])
     
 if __name__ == '__main__':
     main()

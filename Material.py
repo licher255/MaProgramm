@@ -15,6 +15,8 @@ class Material:
         self.density = density
         self.vp = vp
         self.vs = vs
+        if vs=="NA":
+            self.vs= 0.0013+ 0.0013j
 
     def p_wave_impedance(self):
         """
