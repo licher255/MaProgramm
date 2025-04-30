@@ -12,11 +12,11 @@ from PIL import Image
 # 1. 准备图片路径与标注
 # -----------------------------
 img_paths = [
-    'cad/cad5-1.png',
-    '20250408-Variation-Geo/geo5-1water.png',
-    '20250408-Variation-Geo/geo5-1ice.png'
+    'cad/cad7-1.png',
+    '20250408-Variation-Geo/add_patch/geo7-1water.png',
+    '20250408-Variation-Geo/add_patch/geo7-1ice.png'
 ]
-top_labels    = ['', 'geo5-1, water', 'geo5-1, ice']
+top_labels    = ['', 'geo7-1, water', 'geo7-1, ice']
 bottom_labels = ['(a)', '(b)', '(c)']
 
 # -----------------------------
@@ -71,8 +71,8 @@ gs = fig.add_gridspec(
     nrows=2,
     ncols=3,
     height_ratios=[1, 0.03],
-    hspace=0.05,
-    wspace=0.02
+    hspace=0.01,
+    wspace=0.01
 )
 axes = [fig.add_subplot(gs[0, i]) for i in range(3)]
 
@@ -145,7 +145,7 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 output_dir = '20250408-Variation-Geo/grouped'
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, 'grouped5_123.png')
+output_path = os.path.join(output_dir, 'grouped71_123.png')
 fig.savefig(output_path, dpi=300, bbox_inches='tight')
 
 # -----------------------------
