@@ -143,10 +143,10 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 # 6. 保存高分辨率图像
 # -----------------------------
-#output_dir = '20250408-Variation-Geo/grouped'
-#os.makedirs(output_dir, exist_ok=True)
-#output_path = os.path.join(output_dir, 'grouped1_123.png')
-#fig.savefig(output_path, dpi=300, bbox_inches='tight')
+output_dir = '20250408-Variation-Geo/grouped'
+os.makedirs(output_dir, exist_ok=True)
+output_path = os.path.join(output_dir, 'grouped5_123.png')
+fig.savefig(output_path, dpi=300, bbox_inches='tight')
 
 # -----------------------------
 # 7. 展示
