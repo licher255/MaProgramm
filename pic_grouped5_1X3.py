@@ -70,7 +70,7 @@ fig = plt.figure(figsize=(12, 5), constrained_layout=True)
 gs = fig.add_gridspec(
     nrows=2,
     ncols=3,
-    height_ratios=[1, 0.08],
+    height_ratios=[1, 0.03],
     hspace=0.05,
     wspace=0.02
 )
@@ -104,7 +104,7 @@ for i, ax in enumerate(axes):
     # 外部底部 (a)(b)(c) 标签
     ax.annotate(
         bottom_labels[i],
-        xy=(0.5, -0.18),
+        xy=(0.5, -0.05),
         xycoords='axes fraction',
         ha='center', va='top',
         fontsize=12,
@@ -143,10 +143,10 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 # 6. 保存高分辨率图像
 # -----------------------------
-output_dir = '20250408-Variation-Geo/grouped'
-os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, 'grouped1_123.png')
-fig.savefig(output_path, dpi=300, bbox_inches='tight')
+#output_dir = '20250408-Variation-Geo/grouped'
+#os.makedirs(output_dir, exist_ok=True)
+#output_path = os.path.join(output_dir, 'grouped1_123.png')
+#fig.savefig(output_path, dpi=300, bbox_inches='tight')
 
 # -----------------------------
 # 7. 展示
