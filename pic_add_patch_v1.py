@@ -13,7 +13,7 @@ def add_patch_to_image(img_path, save_path, patch_length, real_size):
     img_height, img_width = img.shape[0], img.shape[1]
 
     # 尺度线位置
-    start_point = (img_width * 0.85, img_height * 0.95)
+    start_point = (img_width * 0.80, img_height * 0.99)
     end_point = (start_point[0] + patch_length, start_point[1])
 
     # 绘制线条
@@ -24,7 +24,7 @@ def add_patch_to_image(img_path, save_path, patch_length, real_size):
     ax.add_patch(line)
 
     # 添加文本
-    mid_point_x = (start_point[0] + end_point[0]) / 2
+    mid_point_x = (start_point[0] + end_point[0]) / 2 - 25
     mid_point_y = start_point[1] - 5  # 稍微上移一点
     ax.text(mid_point_x, mid_point_y, f'{real_size} mm',
             color='black', fontsize=12, ha='center', va='bottom')
@@ -65,5 +65,8 @@ def batch_process_images(folder_path):
             print(f"处理完成: {filename}")
 
 if __name__ == '__main__':
-    folder_path = '20250408-Variation-Geo'
-    batch_process_images(folder_path)
+    img_path = '20250408-Variation-Geo\crop\geo1-1ice.png'
+    save_path = "20250408-Variation-Geo\label\geo1-1ice.png"
+    patch_length = 103
+    real_size = 20
+    add_patch_to_image(img_path, save_path, patch_length, real_size)
