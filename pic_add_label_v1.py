@@ -7,7 +7,7 @@ from matplotlib.ticker import FuncFormatter
 import numpy as np
 
 # Load image
-img = mpimg.imread('20250408-Variation-Geo/add_patch/geo1-1ice.png')
+img = mpimg.imread('20250408-Variation-Geo/label/geo1-1ice.png')
 fig, ax = plt.subplots()
 ax.imshow(img)
 ax.axis('off')
