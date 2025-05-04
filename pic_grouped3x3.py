@@ -11,7 +11,7 @@ from matplotlib import gridspec
 # 1. 准备图片路径与标注（这里只取前9张）
 # -----------------------------
 img_paths = [
-    '20250411-Variation-3D Stoff\label\Steel347-AlIce.png',
+    '20250411-Variation-3D Stoff\label\Steel347-Water.png',
     '20250411-Variation-3D Stoff\label\Steel347-AlIce.png',
     '20250411-Variation-3D Stoff\label\Steel347-BiSn.png',
     '20250411-Variation-3D Stoff\label\Steel347-Gallium.png',
