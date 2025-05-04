@@ -11,7 +11,7 @@ import matplotlib.patheffects as patheffects
 # -----------------------------
 # 1. 准备图片路径与标签
 # -----------------------------
-base_dir = '20250408-Variation-Geo/add_patch'
+base_dir = '20250408-Variation-Geo/label'
 nums   = ['1', '2', '3']
 types  = ['water', 'ice']
 out_labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)']
@@ -40,7 +40,7 @@ for i, typ in enumerate(types):
         ax = axes[i][j]
 
         # 读图并显示
-        fname = os.path.join(base_dir, f'geo4-{num}{typ}.png')
+        fname = os.path.join(base_dir, f'geo1-{num}{typ}.png')
         img = mpimg.imread(fname)
         ax.imshow(img)
 
@@ -52,7 +52,7 @@ for i, typ in enumerate(types):
             spine.set_linewidth(0.5)
 
         # 内部顶部文字：例如 "geo1-1, ice"
-        title_txt = f"geo4-{num}, {typ}"
+        title_txt = f"geo1-{num}, {typ}"
         ax.text(
             0.5, 0.96,
             title_txt,
@@ -120,5 +120,5 @@ plt.show()
 output_dir = '20250408-Variation-Geo/grouped'
 os.makedirs(output_dir, exist_ok=True)  # 如果不存在则创建文件夹
 
-output_path = os.path.join(output_dir, 'grouped4_123.png')
+output_path = os.path.join(output_dir, 'grouped1_123.png')
 fig.savefig(output_path, dpi=300, bbox_inches='tight')
