@@ -12,11 +12,11 @@ from PIL import Image
 # 1. 准备图片路径与标注
 # -----------------------------
 img_paths = [
-    'cad/cad7-1.png',
-    '20250408-Variation-Geo/add_patch/geo7-1water.png',
-    '20250408-Variation-Geo/add_patch/geo7-1ice.png'
+    'cad/cad5-2.png',
+    '20250408-Variation-Geo/label/geo5-2ice.png',
+    '20250408-Variation-Geo/label/geo5-2water.png'
 ]
-top_labels    = ['', 'geo7-1, water', 'geo7-1, ice']
+top_labels    = ['geo5-2', 'geo5-2, ice', 'geo5-2, water']
 bottom_labels = ['(a)', '(b)', '(c)']
 
 # -----------------------------
@@ -63,27 +63,34 @@ else:
 # 更新第一张
 images = [np.array(proc0), raw_images[1], raw_images[2]]
 
+# 3. 创建 3×2 布局，前两行放图，第3行放 colorbar
 # -----------------------------
-# 3. 创建紧凑 1×3 布局 + colorbar 行
-# -----------------------------
-fig = plt.figure(figsize=(12, 5), constrained_layout=True)
+fig = plt.figure(figsize=(12, 8), constrained_layout=True)
 gs = fig.add_gridspec(
-    nrows=2,
-    ncols=3,
-    height_ratios=[1, 0.03],
-    hspace=0.01,
-    wspace=0.01
+    nrows=3,
+    ncols=2,
+    height_ratios=[1, 1, 0.03],  # 前两行图，高度各为1；第3行 colorbar，极小
+    hspace=0.001,
+    wspace=0.001
 )
-axes = [fig.add_subplot(gs[0, i]) for i in range(3)]
+
+# 第一行：跨两列
+ax1 = fig.add_subplot(gs[0, :])
+# 第二行：左右各一张
+ax2 = fig.add_subplot(gs[1, 0])
+ax3 = fig.add_subplot(gs[1, 1])
+
+# 汇总到一个列表，方便后面循环
+axes = [ax1, ax2, ax3]
 
 # -----------------------------
-# 4. 显示 + 顶部文字 + 外下方标签 + 细黑边框
+# 4. 显示图片 + 标注
 # -----------------------------
 for i, ax in enumerate(axes):
-    ax.imshow(images[i])
+    ax.imshow(images[i], aspect='equal')
     ax.set_xticks([]); ax.set_yticks([])
 
-    # 仅第2和第3图加细黑边
+    # 仅第2、3张图加细黑边（即 axes[1] 和 axes[2]）
     if i > 0:
         for spine in ax.spines.values():
             spine.set_visible(True)
@@ -93,26 +100,22 @@ for i, ax in enumerate(axes):
     # 内部顶部文字
     if top_labels[i]:
         ax.text(
-            0.5, 0.95,
-            top_labels[i],
+            0.15, 0.98, top_labels[i],
             transform=ax.transAxes,
             ha='center', va='top',
-            fontsize=12,
-            color='black'
+            fontsize=12, color='black'
         )
-
     # 外部底部 (a)(b)(c) 标签
     ax.annotate(
         bottom_labels[i],
         xy=(0.5, -0.05),
         xycoords='axes fraction',
         ha='center', va='top',
-        fontsize=12,
-        color='black'
+        fontsize=12, color='black'
     )
 
 # -----------------------------
-# 5. 构造 colormap 并添加横向 colorbar
+# 5. 构造 colormap 并添加横向 colorbar（跨两列）
 # -----------------------------
 colors = [
     (1,1,1), (0.5,0.8,1), (0,0,1), (0,0,0.5),
@@ -126,7 +129,8 @@ norm = LogNorm(vmin=lin_vmin, vmax=lin_vmax)
 mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
 mappable.set_array([])
 
-cax = fig.add_subplot(gs[1, :])
+# 第3行跨两列
+cax = fig.add_subplot(gs[2, :])
 cbar = fig.colorbar(mappable, cax=cax, orientation='horizontal')
 
 def db_fmt(x, pos):
@@ -145,7 +149,7 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 output_dir = '20250408-Variation-Geo/grouped'
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, 'grouped71_123.png')
+output_path = os.path.join(output_dir, 'grouped52_123.png')
 fig.savefig(output_path, dpi=300, bbox_inches='tight')
 
 # -----------------------------
