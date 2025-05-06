@@ -1,34 +1,113 @@
 import json
+import os
 import matplotlib.pyplot as plt
-from Material import Material
+plt.rcParams.update({'font.size': 12})
+
+# 定义 Material 类
+class Material:
+    def __init__(self, name, density, vp, vs):
+        self.name = name
+        self.density = density
+        self.vp = vp
+        self.vs = vs
+
+def plot_hyperbola(constant, label, color):
+    x_vals = list(range(500, 30000, 100))
+    y_vals = [constant / x if x != 0 else 0 for x in x_vals]
+    plt.plot(x_vals, y_vals, linestyle='--', linewidth=1.5, color=color, label=label)
+
 
 def main():
-    # 读取包含材料属性的 JSON 文件
+    # 读取 JSON 数据
     with open('materials.json', 'r') as file:
         data = json.load(file)
-    
-    # 获取所有材料的数据
+
+    # 创建 Material 实例列表
     materials = [Material(mat['name'], mat['density'], mat['vp'], mat['vs']) for mat in data['materials']]
-    
-    # 提取密度和 vp 数据
+
+    # 自定义展示标签
+    custom_labels = {
+        "al ice composite": "Al-Ice Composite",
+        "bi sn": "BiSn",
+        "gallium": "Gallium",
+        "ice": "Ice",
+        "lead": "Lead",
+        "water": "Water",
+        "wax": "Wax",
+        "rexolite": "Rexolite",
+        "zinc": "Zinc",
+        "aluminium": "Aluminium",
+        "stainless steel347": "Stainless Steel347",
+        "hastelloy x": "Hastelloy X"
+    }
+
+    # 提取绘图所需数据
     densities = [mat.density for mat in materials]
     vp_values = [mat.vp for mat in materials]
-    names = [mat.name for mat in materials]
-    
+
+    # 设置颜色
+    colors = []
+    for mat in materials:
+        name_lower = mat.name.lower()
+        if name_lower == "aluminium":
+            colors.append('red')
+        elif name_lower == "hastelloy x":
+            colors.append('green')
+        elif name_lower == "stainless steel347":
+            colors.append('orange')
+        else:
+            colors.append('blue')
+
     # 绘制散点图
-    plt.figure(figsize=(8, 6))
-    plt.scatter(densities, vp_values, color='b', marker='o')
-    
-    # 标注每个点
-    for i, name in enumerate(names):
-        #plt.text(densities[i], vp_values[i] + 0.02 * max(vp_values), name, fontsize=8, verticalalignment='bottom', horizontalalignment='left')
-        plt.text(densities[i]+500, vp_values[i]-80, name, fontsize=8, verticalalignment='bottom', horizontalalignment='left')
-    # 设置图表标签
+    plt.figure(figsize=(10, 7))
+    plt.scatter(densities, vp_values, c=colors, marker='o')
+
+    # 添加文字标签
+    for i, mat in enumerate(materials):
+        name_key = mat.name.lower()
+        label = custom_labels.get(name_key, mat.name.title())
+        x, y = mat.density, mat.vp
+
+        # 默认偏移
+        dx, dy = 280, -100
+
+        # 调整特定标签位置
+        if name_key == "hastelloy x":
+            dx, dy = -200, 100
+        elif name_key == "stainless steel347":
+            dx, dy = -280, -300
+        elif name_key == "aluminium":
+            dx, dy = 280, -100
+        elif name_key == "gallium":
+            dx, dy = 0, -250
+
+        plt.text(x + dx, y + dy, label, fontsize=12, verticalalignment='bottom')
+
+    # 添加乘积不变曲线
+    for mat in materials:
+        name = mat.name.lower()
+        if name in ["aluminium", "stainless steel347", "hastelloy x"]:
+            C = mat.density * mat.vp
+            label = custom_labels[name]
+            if name == "aluminium":
+                plot_hyperbola(C, f"{label}: Impedance $z$ = {C:.1e}kg/($m^2 s$)", color='red')
+            elif name == "hastelloy x":
+                plot_hyperbola(C, f"{label}: Impedance $z$ = {C:.1e}kg/($m^2 s$)", color='green')
+            elif name == "stainless steel347":
+                plot_hyperbola(C, f"{label}: Impedance $z$ = {C:.1e}kg/($m^2 s$)", color='orange')
+
+    # 图表设置
     plt.xlabel(r'Density ($kg/m^3$)')
     plt.ylabel(r'L wave speed ($m/s$)')
-    plt.xlim (0,30000) 
-    plt.title('Density-sound velocity/logitudinal characteristic')
+    #plt.title('Density vs. Longitudinal Velocity')
+    plt.xlim(0, 30000)
+    plt.ylim(0, 7000)
     plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    output_dir = 'pic_rec'
+    os.makedirs(output_dir, exist_ok=True)
+    plt.savefig(os.path.join(output_dir, 'impedance.png'), dpi=300, bbox_inches='tight')  # ← 必须在 show() 之前
     plt.show()
 
 if __name__ == "__main__":
