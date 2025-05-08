@@ -106,9 +106,37 @@ def main():
     plt.legend()
     plt.tight_layout()
     output_dir = 'pic_rec'
-    os.makedirs(output_dir, exist_ok=True)
-    plt.savefig(os.path.join(output_dir, 'impedance.png'), dpi=300, bbox_inches='tight')  # ← 必须在 show() 之前
-    plt.show()
+    #os.makedirs(output_dir, exist_ok=True)
+    #plt.savefig(os.path.join(output_dir, 'impedance.png'), dpi=300, bbox_inches='tight')  # ← 必须在 show() 之前
+    #plt.show()
+    # ------------------- 计算声阻抗及与Aluminium差值排序 -------------------
+    print("\n声阻抗差值（与 hastelloy x 比较，从大到小排序）：")
+    # 计算每个材料的声阻抗
+    impedance_dict = {mat.name: mat.density * mat.vp for mat in materials}
+
+    # 找出 Aluminium 的声阻抗
+    aluminium_impedance = None
+    for name, imp in impedance_dict.items():
+        if name.lower() == "hastelloy x":
+            aluminium_impedance = imp
+            break
+
+    # 计算与 Aluminium 的差值
+    impedance_diffs = []
+    for name, imp in impedance_dict.items():
+        if name.lower() != "hastelloy x":
+            diff = abs(imp - aluminium_impedance)
+            impedance_diffs.append((name, diff))
+
+    # 排序（从大到小）
+    impedance_diffs.sort(key=lambda x: x[1], reverse=True)
+
+    # 打印结果
+    for name, diff in impedance_diffs:
+        print(f"{name}: 差值 = {diff:.2e} kg/(m²·s)")
 
 if __name__ == "__main__":
     main()
+
+
+
