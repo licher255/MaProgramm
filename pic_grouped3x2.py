@@ -43,7 +43,7 @@ for i, num in enumerate(nums):        # 行：1,2,3
         ax = axes[i][j]
 
         # 读图并显示
-        fname = os.path.join(base_dir, f'geo1-{num}{typ}.png')########
+        fname = os.path.join(base_dir, f'geo4-{num}{typ}.png')########
         img   = mpimg.imread(fname)
         ax.imshow(img, aspect='equal')  # 保持图像原始宽高比
 
@@ -111,7 +111,7 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=6)
 # -----------------------------
 #plt.show()
 
-output_dir = '20250408-Variation-Geo/grouped'
+output_dir = '20250507-Variation-Geo-closedDefect/grouped'
 os.makedirs(output_dir, exist_ok=True)
 output_path = os.path.join(output_dir, 'grouped4_123.png') #####
 fig.savefig(output_path, dpi=300, bbox_inches='tight')

@@ -12,11 +12,11 @@ from PIL import Image
 # 1. 准备图片路径与标注
 # -----------------------------
 img_paths = [
-    'cad/cad5-2.png',
-    '20250408-Variation-Geo/label/geo5-2ice.png',
-    '20250408-Variation-Geo/label/geo5-2water.png'
+    'cad/cad5-1.png',
+    '20250507-Variation-Geo-closedDefect/label/geo5-1ice.png',
+    '20250507-Variation-Geo-closedDefect/label/geo5-1water.png'
 ]
-top_labels    = ['geo5-2', 'geo5-2, ice', 'geo5-2, water']
+top_labels    = ['geo5-1', 'geo5-1, ice', 'geo5-1, water']
 bottom_labels = ['(a)', '(b)', '(c)']
 
 # -----------------------------
@@ -147,9 +147,9 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 # 6. 保存高分辨率图像
 # -----------------------------
-output_dir = '20250408-Variation-Geo/grouped'
+output_dir = '20250507-Variation-Geo-closedDefect/grouped'
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, 'grouped52_123.png')
+output_path = os.path.join(output_dir, 'grouped51_123.png')
 fig.savefig(output_path, dpi=300, bbox_inches='tight')
 
 # -----------------------------

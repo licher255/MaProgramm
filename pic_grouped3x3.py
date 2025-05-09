@@ -11,19 +11,19 @@ from matplotlib import gridspec
 # 1. 准备图片路径与标注（这里只取前9张）
 # -----------------------------
 img_paths = [
-    '20250411-Variation-3D Stoff\label\Steel347-Water.png',
-    '20250411-Variation-3D Stoff\label\Steel347-AlIce.png',
-    '20250411-Variation-3D Stoff\label\Steel347-BiSn.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Gallium.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Ice.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Lead.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Rexolite.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Wax.png',
-    '20250411-Variation-3D Stoff\label\Steel347-Zinc.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-AlIce.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-AlIce.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-BiSn.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Gallium.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Ice.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Lead.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Rexolite.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Wax.png',
+    '20250507-Variation-3D Stoff-closedDefect\label\StainlessSteel347-Zinc.png',
 ]
 top_labels = [
     'Water',
-    'Al-Ice-Comp.',
+    '$Al_2O_3-Ice-Comp.$',
     'BiSn',
     'Gallium',
     'Ice',
@@ -106,8 +106,8 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=4)
 # -----------------------------
 # 5. 保存并展示
 # -----------------------------
-output_dir = '20250411-Variation-3D Stoff/grouped'
+output_dir = '20250507-Variation-3D Stoff-closedDefect/grouped'
 os.makedirs(output_dir, exist_ok=True)
-fig.savefig(os.path.join(output_dir, '3x3_Steel347'),
+fig.savefig(os.path.join(output_dir, '3x3_StainlessSteel347'),
             dpi=300, bbox_inches='tight')
 # plt.show()
