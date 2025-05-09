@@ -29,7 +29,7 @@ def add_patch_to_image(img_path, save_path=None,
     mid_x = (start_point[0] + end_point[0]) / 2
     ax.text(mid_x, start_point[1],
             f'{real_size} mm',
-            color='black', fontsize=14,
+            color='black', fontsize=16,
             ha='center', va='bottom')
 
     plt.tight_layout()
@@ -84,5 +84,5 @@ def batch_process_images(base_folder):
 
 if __name__ == '__main__':
     # 指定主文件夹路径（不含 crop/label 后缀）
-    base_dir = r'20250408-Variation-Geo'
+    base_dir = r'20250507-Variation-Geo-closedDefect'
     batch_process_images(base_dir)

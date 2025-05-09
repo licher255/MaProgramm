@@ -10,7 +10,7 @@ from matplotlib import gridspec
 # -----------------------------
 # 1. 准备图片路径与标签
 # -----------------------------
-base_dir   = '20250408-Variation-Geo/label'
+base_dir   = '20250507-Variation-Geo-closedDefect/label'
 nums       = ['1', '2', '3']
 types      = ['ice', 'water']        # 列顺序：ice 在第一列，water 在第二列
 out_labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)']
@@ -43,7 +43,7 @@ for i, num in enumerate(nums):        # 行：1,2,3
         ax = axes[i][j]
 
         # 读图并显示
-        fname = os.path.join(base_dir, f'geo4-{num}{typ}.png')########
+        fname = os.path.join(base_dir, f'geo1-{num}{typ}.png')########
         img   = mpimg.imread(fname)
         ax.imshow(img, aspect='equal')  # 保持图像原始宽高比
 

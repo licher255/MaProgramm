@@ -62,9 +62,9 @@ def batch_process_images(folder_path, patch_length=54, real_size=20):
 
 if __name__ == '__main__':
     # 只需修改这一行，指向你的主目录
-    base_dir = r'20250411-Variation-3D Stoff'
+    base_dir = r'20250507-Variation-3D Stoff-closedDefect'
     batch_process_images(base_dir)
     
-    #img_path= "20250409-Variation-LuftOrderOhne\crop\AlIce-airDefect.png"
-    #save_path = "20250409-Variation-LuftOrderOhne\label\AlIce-airDefect.png"
+    #img_path= "20250507-Variation-3D Stoff-closedDefect\crop\AlIce-airDefect.png"
+    #save_path = "20250507-Variation-3D Stoff-closedDefect\label\AlIce-airDefect.png"
     #add_patch_to_image(img_path, save_path, patch_length=54, real_size=20)
