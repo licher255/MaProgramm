@@ -12,7 +12,7 @@ from matplotlib import gridspec
 # -----------------------------
 base_dir   = '20250507-Variation-Geo-closedDefect/label'
 nums       = ['1', '2', '3']
-types      = ['ice', 'water']        # 列顺序：ice 在第一列，water 在第二列
+types      = ['water', 'ice']        # 列顺序：ice 在第一列，water 在第二列
 out_labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)']
 
 # -----------------------------
@@ -43,6 +43,7 @@ for i, num in enumerate(nums):        # 行：1,2,3
         ax = axes[i][j]
 
         # 读图并显示
+        #fname = os.path.join(base_dir, f'geo1-{num}{typ}.png')########
         fname = os.path.join(base_dir, f'geo4-{num}{typ}.png')########
         img   = mpimg.imread(fname)
         ax.imshow(img, aspect='equal')  # 保持图像原始宽高比
@@ -56,8 +57,8 @@ for i, num in enumerate(nums):        # 行：1,2,3
 
         # 内部顶部文字：例如 3geo1-1, ice"
         ax.text(
-            0.25, 0.96,
-            f"geo4-{num}, {typ}", ########
+            0.3, 0.96,
+            f"Runden-{num}, {typ}", ########
             transform=ax.transAxes,
             ha='center', va='top',
             fontsize=12, color='black'
@@ -113,6 +114,6 @@ cbar.ax.tick_params(axis='x', which='major', labelsize=12, pad=6)
 
 output_dir = '20250507-Variation-Geo-closedDefect/grouped'
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, 'grouped4_123.png') #####
+output_path = os.path.join(output_dir, 'grouped4_123_v2.png') #####
 fig.savefig(output_path, dpi=300, bbox_inches='tight')
 print(f"Saved figure to {output_path}")
